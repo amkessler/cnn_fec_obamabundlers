@@ -349,5 +349,22 @@ targetlist_wcandname <- left_join(targetlist, candnames, by = c("filer_committee
 write_csv(targetlist_wcandname, "output/targetlist_wcandname.csv")
 saveRDS(targetlist_wcandname, "processed_data/targetlist_wcandname.rds")
 
- 
 
+### FIND UNIQUE NAME/ADDRESS VARIATIONS ####
+names(targetlist_wcandname)
+
+targetlist_wcandname_uniques <- targetlist_wcandname %>% 
+  select(cand_name,
+         contributor_last_name,
+         contributor_first_name,
+         contributor_middle_name,
+         contributor_suffix,
+         contributor_street_1,
+         contributor_street_2,
+         contributor_city,
+         contributor_state,
+         zip5,
+         contributor_employer,
+         contributor_occupation
+        ) %>% 
+  unique()
