@@ -86,8 +86,7 @@ matchbundlers <- function(var_l, var_f) {
   result <- prez_contribs %>% 
     filter(
       (str_detect(contributor_last_name, var_l) && firstname_firstletter == var_f)
-    ) %>% 
-    collect()
+    ) 
   
   return(result)
 
@@ -97,6 +96,7 @@ zzz <- matchbundlers(test_l, test_f)
 
 
 
+zzz_mapped <- map2_df(vector_last, vector_firstletter, matchbundlers)
 
 
 
