@@ -76,14 +76,7 @@ vector_firstletter <- bundlers_fornamematch %>%
 test_l <- vector_last[1]
 test_f <- vector_firstletter[1]
 
-#IN PROGRESS
-test_result <- prez_contribs %>% 
-  filter(
-    (str_detect(contributor_last_name, test_l) && firstname_firstletter == test_f)
-    ) %>% 
-  collect()
-
-
+#WIP on functions
 matchbundlers <- function(var_l, var_f) {
   result <- prez_contribs %>% 
     filter(
@@ -96,6 +89,12 @@ matchbundlers <- function(var_l, var_f) {
   }
 
 zzz <- matchbundlers(test_l, test_f)
+
+
+
+
+
+
 
 #name matches and download to local dataframe
 targetlist <- prez_contribs %>% 
