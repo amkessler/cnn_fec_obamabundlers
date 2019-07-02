@@ -84,8 +84,18 @@ test_result <- prez_contribs %>%
   collect()
 
 
+matchbundlers <- function(var_l, var_f) {
+  result <- prez_contribs %>% 
+    filter(
+      (str_detect(contributor_last_name, var_l) && firstname_firstletter == var_f)
+    ) %>% 
+    collect()
+  
+  return(result)
 
+  }
 
+zzz <- matchbundlers(test_l, test_f)
 
 #name matches and download to local dataframe
 targetlist <- prez_contribs %>% 
