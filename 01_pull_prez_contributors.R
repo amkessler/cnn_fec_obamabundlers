@@ -5,6 +5,7 @@ library(tidyverse)
 library(lubridate)
 library(janitor)
 library(dbplyr)
+library(readxl)
 
 #list the tables in the database
 src_dbi(con)
@@ -18,7 +19,6 @@ glimpse(contribs_db)
 #create zip5 field by pulling out just first five digits
 contribs_db <- contribs_db %>% 
   filter(active==TRUE,
-         status == "ACTIVE",
          entity_type == "IND") %>% 
   mutate(
     zip5 = str_sub(str_trim(contributor_zip), 1, 5)
@@ -52,7 +52,40 @@ glimpse(prez_contribs)
 
 
 
-### PULLING OUT POSSIBLE OBAMA BUNDLERS #####
+### PULLING OUT POSSIBLE OBAMA BUNDLERS ##### ---------------------------
+
+bundlers_raw <- read_excel("processed_data/OBAMATOPBUNDLERS_CLEAN_STRINGCODE.xlsx")
+
+bundlers <- bundlers_raw %>% 
+  clean_names() %>% 
+  remove_empty(c("rows", "cols"))  %>% 
+  mutate(
+    name_last = str_trim(str_to_upper(name_last)),
+    firstname_firstletter = str_sub(str_trim(name_first), 1, 1)
+  )
+
+bundlers_fornamematch <- bundlers %>% 
+  select(name_last, firstname_firstletter)
+
+vector_last <- bundlers_fornamematch %>% 
+  pull(name_last)
+
+vector_firstletter <- bundlers_fornamematch %>% 
+  pull(firstname_firstletter)
+
+test_l <- vector_last[1]
+test_f <- vector_firstletter[1]
+
+#IN PROGRESS
+test_result <- prez_contribs %>% 
+  filter(
+    (str_detect(contributor_last_name, test_l) && firstname_firstletter == test_f)
+    ) %>% 
+  collect()
+
+
+
+
 
 #name matches and download to local dataframe
 targetlist <- prez_contribs %>% 
