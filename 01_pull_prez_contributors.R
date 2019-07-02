@@ -18,11 +18,16 @@ glimpse(contribs_db)
 #filter out only individual contributions, and active ones
 #create zip5 field by pulling out just first five digits
 contribs_db <- contribs_db %>% 
+  mutate(form_type = str_to_upper(form_type)) %>% 
   filter(active==TRUE,
-         entity_type == "IND") %>% 
+         form_type %in% c("SA17A", #individuals other than cmtes
+                          "SA18", #transfers from other cmtes
+                          "SB28A")) %>% #refunds to individuals
   mutate(
     zip5 = str_sub(str_trim(contributor_zip), 1, 5)
   )
+
+## NOTE: CAN REPLACE ABOVE WITH THE MATERIALIZED VIEW IN POSTGRES
 
 
 #pull candidate table from postgres db
