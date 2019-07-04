@@ -47,11 +47,16 @@ prez_contribs <- contribs_db %>%
   filter(filer_committee_id_number %in% prez_cmte_ids)
 
 #first letter of first name column for matching
+#we'll also collect it locally to allow for map() function later to work
 prez_contribs <- prez_contribs %>% 
   mutate(
     firstname_firstletter = str_sub(str_trim(contributor_first_name), 1, 1),
     matchstring = str_to_upper(str_trim(paste0(firstname_firstletter, contributor_last_name)))
-  )
+  ) %>% 
+  collect()
+
+#save the result as RDS
+saveRDS(prez_contribs, "local_contribs_holding/prez_contribs.rds")
 
 #check to make sure it worked
 glimpse(prez_contribs)
@@ -88,15 +93,19 @@ matchbundlers <- function(match_var) {
 }
 
 
-#test out the function with one match
-zzz <- matchbundlers(test_match) %>% 
-  collect()
+#use function with one match
+zzz <- matchbundlers(test_match) 
 
+#works!
 
-### ATTEMPT TO USE MAP() FUNCTION
-#run all the matches?
-zzz_mapped <- map_df(vector_matchstring, matchbundlers) %>% 
-  collect()
+### USE MAP() FUNCTION to run all the matches
+prez_contribs_bundler_matches <- map_df(vector_matchstring, matchbundlers) 
+#works!
+#(required change above to collect the large prez_contribs table locally)
+
+#save to files
+write_csv(prez_contribs_bundler_matches, "output/prez_contribs_bundler_matches.csv")
+saveRDS(prez_contribs_bundler_matches, "output/prez_contribs_bundler_matches.rds")
 
 
 
