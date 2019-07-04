@@ -50,7 +50,7 @@ prez_contribs <- contribs_db %>%
 prez_contribs <- prez_contribs %>% 
   mutate(
     firstname_firstletter = str_sub(str_trim(contributor_first_name), 1, 1),
-    matchstring = str_trim(paste0(firstname_firstletter, contributor_last_name))
+    matchstring = str_to_upper(str_trim(paste0(firstname_firstletter, contributor_last_name)))
   )
 
 #check to make sure it worked
@@ -68,15 +68,16 @@ bundlers <- bundlers_raw %>%
   mutate(
     name_last = str_trim(str_to_upper(name_last)),
     firstname_firstletter = str_sub(str_trim(name_first), 1, 1),
-    matchstring = str_trim(paste0(firstname_firstletter, name_last))
+    matchstring = str_to_upper(str_trim(paste0(firstname_firstletter, name_last)))
   )
 
+#create a vector from matchstring field to feed to function
 vector_matchstring <- bundlers %>% 
   pull(matchstring)
 
 test_match <- vector_matchstring[1]
 
-#WIP on functions
+#FUNCTION TO PULL MATCHES ####
 matchbundlers <- function(match_var) {
   result <- prez_contribs %>% 
     filter(
