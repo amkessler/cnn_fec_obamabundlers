@@ -82,6 +82,7 @@ vector_matchstring <- bundlers %>%
 
 test_match <- vector_matchstring[1]
 
+
 #FUNCTION TO PULL MATCHES ####
 matchbundlers <- function(match_var) {
   result <- prez_contribs %>% 
@@ -98,14 +99,20 @@ zzz <- matchbundlers(test_match)
 
 #works!
 
-### USE MAP() FUNCTION to run all the matches
+### USE MAP() to have FUNCTION run on all the matches
 prez_contribs_bundler_matches <- map_df(vector_matchstring, matchbundlers) 
-#works!
-#(required change above to collect the large prez_contribs table locally)
+#works! (req change above to collect the large prez_contribs table locally)
 
-#save to files
+#save results 
 write_csv(prez_contribs_bundler_matches, "output/prez_contribs_bundler_matches.csv")
 saveRDS(prez_contribs_bundler_matches, "output/prez_contribs_bundler_matches.rds")
+
+
+
+
+
+
+####
 
 
 #add candidate names
