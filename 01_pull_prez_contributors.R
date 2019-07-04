@@ -56,7 +56,7 @@ prez_contribs <- prez_contribs %>%
   collect()
 
 #save the result as RDS
-saveRDS(prez_contribs, "local_contribs_holding/prez_contribs.rds")
+saveRDS(prez_contribs, "holding/prez_contribs.rds")
 
 #check to make sure it worked
 glimpse(prez_contribs)
