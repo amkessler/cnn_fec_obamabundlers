@@ -139,4 +139,4 @@ final_for_research %>%
 
 
 #write results to file
-write_csv(final_for_research, "output/final_for_research.csv")
+write_csv(final_for_research, "output/final_for_research.csv", na = "")
