@@ -17,6 +17,8 @@ prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>%
         contributor_city,
         contributor_state,
         contributor_zip,
+        contributor_occupation,
+        contributor_employer,
         everything())
 
 
