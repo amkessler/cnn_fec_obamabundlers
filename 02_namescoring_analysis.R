@@ -95,6 +95,16 @@ joined %>%
   View()
 
 
+joined %>% 
+  mutate(
+   mark = if_else(bundler_last == contributor_last_name && bundler_first == contributor_first_name, 
+                  "X", 
+                  "") 
+  ) %>% 
+  select(mark, everything()) %>% 
+  filter(mark != "X") %>% 
+  View()
+    
 
 
 #### FORMER ANALYSIS SCRIPTS ####
