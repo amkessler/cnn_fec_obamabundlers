@@ -8,7 +8,8 @@ prez_contribs_bundler_matches <- readRDS("output/prez_contribs_bundler_matches.r
 
 #place fec contributor info to the left of dataframe
 prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>% 
-  select(contributor_first_name,
+  select(contributor_last_name,
+        contributor_first_name,
         contributor_middle_name,
         contributor_prefix,
         contributor_suffix,
@@ -19,7 +20,21 @@ prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>%
         contributor_zip,
         contributor_occupation,
         contributor_employer,
-        everything())
+        everything()) %>% 
+  mutate(
+    contributor_last_name = str_to_upper(str_squish(contributor_last_name)),
+    contributor_first_name = str_to_upper(str_squish(contributor_first_name)),
+    contributor_middle_name = str_to_upper(str_squish(contributor_middle_name)),
+    contributor_prefix = str_to_upper(str_squish(contributor_prefix)),
+    contributor_suffix = str_to_upper(str_squish(contributor_suffix)),
+    contributor_street_1 = str_to_upper(str_squish(contributor_street_1)),
+    contributor_street_2 = str_to_upper(str_squish(contributor_street_2)),
+    contributor_city = str_to_upper(str_squish(contributor_city)),
+    contributor_state = str_to_upper(str_squish(contributor_state)),
+    contributor_zip = str_to_upper(str_squish(contributor_zip)),
+    contributor_occupation = str_to_upper(str_squish(contributor_occupation)),
+    contributor_employer = str_to_upper(str_squish(contributor_employer))
+  )
 
 
 #pull in bundler file and add columns
@@ -66,6 +81,18 @@ bundlers <- bundlers %>%
 joined <- inner_join(bundlers, prez_contribs_bundler_matches, by = "matchstring")
 
 
+# ASSIGNING SCORES TO POSSIBLE MATCHES ####
+
+names(joined)
+
+joined %>% 
+  filter(
+    bundler_last == contributor_last_name,
+    bundler_first == contributor_first_name,
+    bundler_city == contributor_city,
+    bundler_state == contributor_state,
+    ) %>% 
+  View()
 
 
 
