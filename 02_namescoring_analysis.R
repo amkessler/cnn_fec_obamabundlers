@@ -123,9 +123,12 @@ final_for_check <- joined %>%
            bundler_state == contributor_state ~ "1 - FirstLastCityState",
          bundler_last == contributor_last_name & 
            bundler_first == contributor_first_name &
+           bundler_city != contributor_city &
            bundler_state == contributor_state ~ "2 - FirstLastState",
          bundler_last == contributor_last_name & 
-           bundler_first == contributor_first_name ~ "3 - FirstLast"
+           bundler_first == contributor_first_name &
+          bundler_city != contributor_city &
+           bundler_state != contributor_state ~ "3 - FirstLast"
          )
     ) %>% 
   select(match_type, everything()) 
