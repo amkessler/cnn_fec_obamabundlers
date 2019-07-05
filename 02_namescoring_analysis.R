@@ -137,3 +137,6 @@ final_for_research <- joined %>%
 final_for_research %>% 
   count(match_type)
 
+
+#write results to file
+write_csv(final_for_research, "output/final_for_research.csv")
