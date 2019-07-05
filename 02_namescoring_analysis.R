@@ -37,6 +37,41 @@ prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>%
   )
 
 
+#add a unique id to each of the records
+prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>% 
+  tibble::rowid_to_column("index_id")
+
+# create a table for joining that includes only unique name/add combinations
+unique_potential_matches <- prez_contribs_bundler_matches %>% 
+  select(index_id,
+         contributor_last_name,
+         contributor_first_name,
+         contributor_middle_name,
+         contributor_prefix,
+         contributor_suffix,
+         contributor_street_1,
+         contributor_street_2,
+         contributor_city,
+         contributor_state,
+         contributor_zip,
+         contributor_occupation,
+         contributor_employer,
+         matchstring) %>% 
+  distinct(contributor_last_name,
+           contributor_first_name,
+           contributor_middle_name,
+           contributor_prefix,
+           contributor_suffix,
+           contributor_street_1,
+           contributor_street_2,
+           contributor_city,
+           contributor_state,
+           contributor_zip,
+           contributor_occupation,
+           contributor_employer,
+           .keep_all = TRUE)
+
+
 #pull in bundler file and add columns
 bundlers_raw <- read_excel("processed_data/OBAMATOPBUNDLERS_CLEAN_STRINGCODE.xlsx")
 
@@ -47,12 +82,7 @@ bundlers <- bundlers_raw %>%
     name_last = str_trim(str_to_upper(name_last)),
     firstname_firstletter = str_sub(str_trim(name_first), 1, 1),
     matchstring = str_to_upper(str_trim(paste0(firstname_firstletter, name_last)))
-  ) %>% 
-  select(
-    -full_name,
-    -code1,
-    -code2
-  )
+  ) 
 
 #rename columns to signify bundler origin (to aid with reading joined table)
 #also uppercase them and remove any extraneous spaces
@@ -78,33 +108,31 @@ bundlers <- bundlers %>%
   )
 
 
-joined <- inner_join(bundlers, prez_contribs_bundler_matches, by = "matchstring")
+joined <- inner_join(bundlers, unique_potential_matches, by = "matchstring")
 
 
 # ASSIGNING SCORES TO POSSIBLE MATCHES ####
-
 names(joined)
 
-joined %>% 
-  filter(
-    bundler_last == contributor_last_name,
-    bundler_first == contributor_first_name,
-    bundler_city == contributor_city,
-    bundler_state == contributor_state,
-    ) %>% 
-  View()
-
-
-joined %>% 
+final_for_check <- joined %>% 
   mutate(
-   mark = if_else(bundler_last == contributor_last_name && bundler_first == contributor_first_name, 
-                  "X", 
-                  "") 
-  ) %>% 
-  select(mark, everything()) %>% 
-  filter(mark != "X") %>% 
-  View()
-    
+    match_type = case_when(
+         bundler_last == contributor_last_name & 
+           bundler_first == contributor_first_name &
+           bundler_city == contributor_city &
+           bundler_state == contributor_state ~ "1 - FirstLastCityState",
+         bundler_last == contributor_last_name & 
+           bundler_first == contributor_first_name &
+           bundler_state == contributor_state ~ "2 - FirstLastState",
+         bundler_last == contributor_last_name & 
+           bundler_first == contributor_first_name ~ "3 - FirstLast"
+         )
+    ) %>% 
+  select(match_type, everything()) 
+
+
+final_for_check %>% 
+  count(match_type)
 
 
 #### FORMER ANALYSIS SCRIPTS ####
