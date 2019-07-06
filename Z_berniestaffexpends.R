@@ -33,7 +33,9 @@ bernie_expends_staff <- bernie_expends %>%
   filter(expenditure_purpose_descrip == "Salary" |
            str_detect(expenditure_purpose_descrip, "Payroll")) 
 
-
+#looks like Bernie uses memos to list actual staffers
+bernie_expends_staff <- bernie_expends_staff %>% 
+  filter(status == "MEMO")
 
 
 
