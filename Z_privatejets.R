@@ -99,8 +99,22 @@ prez_travel %>%
 
 #look for possible airline mentions as payee
 air_search <- prez_travel %>% 
-         filter(str_detect(payee_organization_name, "AIR"))
+         filter(
+           str_detect(payee_organization_name, "AIR"),	
+           !str_detect(payee_organization_name, "FAIRFIELD INN"),
+           !str_detect(payee_organization_name, "AIRBNB")
+                )
+
 
 air_search %>% 
   count(payee_organization_name) %>% 
   View()
+
+#remember to examine the active vs. memo in the results
+
+
+#while we're at it, what's up with Airbnb expenses
+airbnb <- prez_travel %>% 
+  filter(
+    str_detect(payee_organization_name, "AIRBNB")
+  )
