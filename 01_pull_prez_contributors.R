@@ -102,9 +102,19 @@ zzz <- matchbundlers(test_match)
 
 #works!
 
+
 ### USE MAP() to have FUNCTION run on all the matches
 prez_contribs_bundler_matches <- map_df(vector_matchstring, matchbundlers) 
 #works! (req change above to collect the large prez_contribs table locally)
+
+
+## add candidate name to the mix
+head(candnames)
+
+prez_contribs_bundler_matches
+
+prez_contribs_bundler_matches <- inner_join(prez_contribs_bundler_matches, candnames, by = c("filer_committee_id_number" = "fec_committee_id")) %>% 
+  select(candidate_name = name, everything())
 
 #save results 
 write_csv(prez_contribs_bundler_matches, "output/prez_contribs_bundler_matches.csv")
