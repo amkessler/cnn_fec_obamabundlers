@@ -33,11 +33,14 @@ contribs_db <- contribs_db %>%
 #pull candidate table from postgres db
 cand_db <- tbl(con, "cycle_2020_candidate")
 
-#filter only for presidential
+#filter only for presidential and DEMOCRATS
 candnames <- cand_db %>% 
-  filter(district == "US") %>% 
-  select(name, fec_committee_id) %>% 
+  filter(district == "US",
+         party == "D") %>% 
+  select(name, 
+         fec_committee_id) %>% 
   collect()
+
 
 #grab prez committee ids
 prez_cmte_ids <- candnames %>% pull(fec_committee_id)
