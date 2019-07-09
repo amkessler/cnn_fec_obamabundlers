@@ -136,7 +136,8 @@ final_for_research <- joined %>%
          bundler_last == contributor_last_name & 
            bundler_first == contributor_first_name &
           bundler_city != contributor_city &
-           bundler_state != contributor_state ~ "3 - FirstLast"
+           bundler_state != contributor_state ~ "3 - FirstLast",
+         TRUE ~ "4 - LastName-FirstInitialOnly"
          )
     ) %>% 
   select(match_type, everything()) 
