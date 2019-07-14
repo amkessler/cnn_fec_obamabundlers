@@ -6,9 +6,14 @@ library(readxl)
 #read in saved data file from previous step
 prez_contribs_bundler_matches <- readRDS("output/prez_contribs_bundler_matches.rds")
 
+#limit to 500 aggregate or above
+prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>% 
+  filter(contribution_aggregate >= 500)
+
 #place fec contributor info to the left of dataframe
 prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>% 
-  select(contributor_last_name,
+  select(candidate_name,
+         contributor_last_name,
         contributor_first_name,
         contributor_middle_name,
         contributor_prefix,
@@ -22,6 +27,7 @@ prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>%
         contributor_employer,
         everything()) %>% 
   mutate(
+    candidate_name = str_to_upper(str_squish(candidate_name)),
     contributor_last_name = str_to_upper(str_squish(contributor_last_name)),
     contributor_first_name = str_to_upper(str_squish(contributor_first_name)),
     contributor_middle_name = str_to_upper(str_squish(contributor_middle_name)),
@@ -44,6 +50,7 @@ prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>%
 # create a table for joining that includes only unique name/add combinations
 unique_potential_matches <- prez_contribs_bundler_matches %>% 
   select(index_id,
+         candidate_name,
          contributor_last_name,
          contributor_first_name,
          contributor_middle_name,
@@ -57,7 +64,8 @@ unique_potential_matches <- prez_contribs_bundler_matches %>%
          contributor_occupation,
          contributor_employer,
          matchstring) %>% 
-  distinct(contributor_last_name,
+  distinct(candidate_name,
+           contributor_last_name,
            contributor_first_name,
            contributor_middle_name,
            contributor_prefix,
@@ -139,4 +147,4 @@ final_for_research %>%
 
 
 #write results to file
-write_csv(final_for_research, "output/final_for_research.csv", na = "")
+write_csv(final_for_research, "output/final_for_research_500andabove.csv", na = "")
