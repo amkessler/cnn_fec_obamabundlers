@@ -96,6 +96,17 @@ matchbundlers <- function(match_var) {
   return(result)
 }
 
+# 
+# #FUNCTION TO PULL MATCHES - OLD VERSION
+# matchbundlers <- function(match_var) {
+#   result <- prez_contribs %>% 
+#     filter(
+#       (matchstring == match_var)
+#     ) 
+#   
+#   return(result)
+# }
+
 
 #use function with one match
 zzz <- matchbundlers(test_match) 
