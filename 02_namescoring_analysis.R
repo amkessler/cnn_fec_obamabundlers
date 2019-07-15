@@ -89,7 +89,7 @@ bundlers <- bundlers_raw %>%
   mutate(
     name_last = str_trim(str_to_upper(name_last)),
     firstname_firstletter = str_sub(str_trim(name_first), 1, 1),
-    matchstring = str_to_upper(str_trim(paste0(firstname_firstletter, name_last)))
+    matchstring = name_last
   ) 
 
 #rename columns to signify bundler origin (to aid with reading joined table)
@@ -137,7 +137,15 @@ final_for_research <- joined %>%
            bundler_first == contributor_first_name &
           bundler_city != contributor_city &
            bundler_state != contributor_state ~ "3 - FirstLast",
-         TRUE ~ "4 - LastName-FirstInitialOnly"
+         bundler_last == contributor_last_name & 
+           bundler_first != contributor_first_name &
+           bundler_city == contributor_city &
+           bundler_state == contributor_state ~ "4 - LastCityState",
+         bundler_last == contributor_last_name & 
+           bundler_first != contributor_first_name &
+           bundler_city != contributor_city &
+           bundler_state == contributor_state ~ "5 - LastState",
+         TRUE ~ "6 - LastNameOnly"
          )
     ) %>% 
   select(match_type, everything()) 
@@ -145,6 +153,10 @@ final_for_research <- joined %>%
 
 final_for_research %>% 
   count(match_type)
+
+#order by status, lname
+final_for_research <- final_for_research %>% 
+  arrange(match_type, bundler_last, bundler_first, contributor_last_name, contributor_first_name)
 
 
 #write results to file
