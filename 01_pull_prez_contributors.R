@@ -49,12 +49,12 @@ prez_cmte_ids <- candnames %>% pull(fec_committee_id)
 prez_contribs <- contribs_db %>% 
   filter(filer_committee_id_number %in% prez_cmte_ids)
 
-#first letter of first name column for matching
+#first letter of first name column for later use in filtering matches
 #we'll also collect it locally to allow for map() function later to work
 prez_contribs <- prez_contribs %>% 
   mutate(
     firstname_firstletter = str_sub(str_trim(contributor_first_name), 1, 1),
-    matchstring = str_to_upper(str_trim(paste0(firstname_firstletter, contributor_last_name)))
+    matchstring = str_to_upper(str_trim(contributor_last_name)) #use matchstring for last name here
   ) %>% 
   collect()
 
@@ -76,7 +76,7 @@ bundlers <- bundlers_raw %>%
   mutate(
     name_last = str_trim(str_to_upper(name_last)),
     firstname_firstletter = str_sub(str_trim(name_first), 1, 1),
-    matchstring = str_to_upper(str_trim(paste0(firstname_firstletter, name_last)))
+    matchstring = name_last #renaming the last name field to matchstring here
   )
 
 #create a vector from matchstring field to feed to function
