@@ -27,6 +27,7 @@ contribs_db <- contribs_db %>%
     zip5 = str_sub(str_trim(contributor_zip), 1, 5)
   )
 
+
 ## NOTE: CAN REPLACE ABOVE WITH THE MATERIALIZED VIEW IN POSTGRES
 
 
@@ -63,6 +64,21 @@ saveRDS(prez_contribs, "holding/prez_contribs.rds")
 
 #check to make sure it worked
 glimpse(prez_contribs)
+
+
+## now let's filter for JUST Q2 CONTRIBUTIONS ####
+
+#convert contrib date to date format
+prez_contribs$contribution_date <- ymd(prez_contribs$contribution_date)
+head(prez_contribs$contribution_date)
+tail(prez_contribs$contribution_date)
+
+#filter for Q2
+prez_contribs <- prez_contribs %>% 
+  filter(contribution_date > as_date("2019-04-01")) 
+
+
+
 
 
 
