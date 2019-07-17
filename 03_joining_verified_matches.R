@@ -65,3 +65,32 @@ joined %>%
   View()
 
 glimpse(joined)
+
+
+
+
+### bring in BIG ORIGINAL contribs table to check against #### 
+
+#save the result as RDS
+prez_contribs_orig <- readRDS("holding/prez_contribs.rds")
+
+glimpse(prez_contribs_orig)
+
+prez_contribs_orig <- prez_contribs_orig %>% 
+  mutate(
+    contributor_last_name = str_to_upper(contributor_last_name),
+    contributor_first_name = str_to_upper(contributor_first_name)
+  )
+
+#add cand name - run top of step 01 first to grab candnames from postgres
+prez_contribs_orig <- inner_join(prez_contribs_orig, candnames, by = c("filer_committee_id_number" = "fec_committee_id")) %>% 
+  select(candidate_name = name, everything())
+
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "CORZINE",
+    contributor_first_name == "JON"
+  ) %>% 
+  View()
