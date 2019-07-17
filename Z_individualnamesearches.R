@@ -65,4 +65,12 @@ occup_actress <- prez_contribs %>%
   ) %>% 
   collect()
 
+occup_actress <- occup_actress %>% 
+  mutate(
+    contribution_date = ymd(contribution_date)
+  ) %>% 
+  filter(
+    contribution_date >= as_date("2019-04-01")
+  )
+
 writexl::write_xlsx(occup_actress, "output/actress.xlsx")
