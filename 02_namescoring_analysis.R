@@ -2,6 +2,8 @@ library(tidyverse)
 library(lubridate)
 library(janitor)
 library(readxl)
+library(writexl)
+options(scipen = 999)
 
 #read in saved data file from previous step
 prez_contribs_bundler_matches <- readRDS("output/prez_contribs_bundler_matches.rds")
@@ -43,13 +45,38 @@ prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>%
   )
 
 
-#add a unique id to each of the records
+#add a unique id to each of the records/rows
 prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>% 
   tibble::rowid_to_column("index_id")
+
+#add a generated hash string for donors
+prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>% 
+  mutate(
+    donorhash = paste0(
+      contributor_last_name,
+      contributor_first_name,
+      contributor_middle_name,
+      contributor_prefix,
+      contributor_suffix,
+      contributor_street_1,
+      contributor_street_2,
+      contributor_city,
+      contributor_state,
+      contributor_zip,
+      contributor_occupation,
+      contributor_employer
+    )
+  ) 
+
+
+#save result for later use in joining up verified matches in step 03
+saveRDS(prez_contribs_bundler_matches, "processed_data/prez_contribs_bundler_matches_forjoin.rds")
+
 
 # create a table for joining that includes only unique name/add combinations
 unique_potential_matches <- prez_contribs_bundler_matches %>% 
   select(index_id,
+         donorhash,
          candidate_name,
          contributor_last_name,
          contributor_first_name,
@@ -154,6 +181,12 @@ final_for_research <- joined %>%
 final_for_research %>% 
   count(match_type)
 
+final_for_research %>% 
+  filter(match_type != "6 - LastNameOnly") %>% 
+  count(candidate_name) %>% 
+  arrange(desc(n))
+
+
 #order by status, lname
 final_for_research <- final_for_research %>% 
   arrange(match_type, bundler_last, bundler_first, contributor_last_name, contributor_first_name)
@@ -161,3 +194,4 @@ final_for_research <- final_for_research %>%
 
 #write results to file
 write_csv(final_for_research, "output/final_for_research_500andabove.csv", na = "")
+write_xlsx(final_for_research, "output/final_for_research_500andabove.xlsx")
