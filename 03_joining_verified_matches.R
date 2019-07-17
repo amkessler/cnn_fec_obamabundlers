@@ -38,5 +38,30 @@ saveRDS(matches_yes, "processed_data/matches_yes.rds")
 
 #join verified matches with original fec contribution records
 
+joined <- left_join(matches_yes, prez_contribs_forjoin, by = c("donorhash"))
+
+joined %>% 
+  count(status)
+
+joined %>% 
+  filter(status == "MEMO") %>% 
+  View()
+  
+joined %>% 
+  count(candidate_name.y) %>% 
+  arrange(desc(n))
+
+joined %>% 
+  group_by(bundler_last, bundler_first, candidate_name.y) %>% 
+  summarise(n = n()) %>% 
+  arrange(bundler_last, bundler_first, candidate_name.y, desc(n)) %>% 
+  View()
 
 
+joined %>% 
+  group_by(candidate_name.y, bundler_last, bundler_first) %>% 
+  summarise(n = n()) %>% 
+  arrange(candidate_name.y, bundler_last, bundler_first, desc(n)) %>% 
+  View()
+
+glimpse(joined)
