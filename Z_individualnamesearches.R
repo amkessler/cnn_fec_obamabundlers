@@ -73,4 +73,8 @@ occup_actress <- occup_actress %>%
     contribution_date >= as_date("2019-04-01")
   )
 
-writexl::write_xlsx(occup_actress, "output/actress.xlsx")
+## add candidate name to the mix
+occup_actress_withcandname <- inner_join(occup_actress, candnames, by = c("filer_committee_id_number" = "fec_committee_id")) %>% 
+  select(candidate_name = name, everything())
+
+writexl::write_xlsx(occup_actress_withcandname, "output/actress.xlsx")
