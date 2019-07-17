@@ -52,19 +52,20 @@ joined %>%
   arrange(desc(n))
 
 joined %>% 
+  count(bundler_last, bundler_first)
+
+#by bundler
+joined_bybundler <- joined %>% 
   group_by(bundler_last, bundler_first, candidate_name.y) %>% 
   summarise(n = n()) %>% 
-  arrange(bundler_last, bundler_first, candidate_name.y, desc(n)) %>% 
-  View()
+  arrange(bundler_last, bundler_first, candidate_name.y, desc(n)) 
 
-
-joined %>% 
+#by candidate
+joined_bycandidate <- joined %>% 
   group_by(candidate_name.y, bundler_last, bundler_first) %>% 
   summarise(n = n()) %>% 
   arrange(candidate_name.y, bundler_last, bundler_first, desc(n)) %>% 
   View()
-
-glimpse(joined)
 
 
 
@@ -79,8 +80,13 @@ glimpse(prez_contribs_orig)
 prez_contribs_orig <- prez_contribs_orig %>% 
   mutate(
     contributor_last_name = str_to_upper(contributor_last_name),
-    contributor_first_name = str_to_upper(contributor_first_name)
+    contributor_first_name = str_to_upper(contributor_first_name),
+    contribution_date = ymd(contribution_date)
   )
+
+#filter for just Q2 only
+prez_contribs_orig <- prez_contribs_orig %>% 
+  filter(contribution_date >= as_date("2019-04-01"))
 
 #add cand name - run top of step 01 first to grab candnames from postgres
 prez_contribs_orig <- inner_join(prez_contribs_orig, candnames, by = c("filer_committee_id_number" = "fec_committee_id")) %>% 
@@ -88,9 +94,57 @@ prez_contribs_orig <- inner_join(prez_contribs_orig, candnames, by = c("filer_co
 
 
 
+#pull out a donor names to check ####
 prez_contribs_orig %>% 
   filter(
     contributor_last_name == "CORZINE",
     contributor_first_name == "JON"
+  ) 
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "AVANT",
+    contributor_first_name == "NICOLE"
+  ) 
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "GALLOGLY",
+    contributor_first_name == "MARK"
   ) %>% 
-  View()
+  arrange(candidate_name) 
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "GOLDMAN",
+    contributor_first_name == "LISA"
+  ) %>% 
+  arrange(candidate_name) 
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "HALPERN",
+    contributor_first_name == "DANIEL"
+  ) %>% 
+  arrange(candidate_name)
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "KRAMER",
+    contributor_first_name == "ORIN"
+  ) %>% 
+  arrange(candidate_name)
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "PARKER",
+    contributor_first_name == "YOLANDA"
+  ) %>% 
+  arrange(candidate_name)
+
