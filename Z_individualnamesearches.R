@@ -65,3 +65,4 @@ occup_actress <- prez_contribs %>%
   ) %>% 
   collect()
 
+writexl::write_xlsx(occup_actress, "output/actress.xlsx")
