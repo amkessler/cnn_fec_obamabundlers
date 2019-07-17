@@ -44,8 +44,7 @@ joined %>%
   count(status)
 
 joined %>% 
-  filter(status == "MEMO") %>% 
-  View()
+  filter(status == "MEMO") 
   
 joined %>% 
   count(candidate_name.y) %>% 
@@ -64,8 +63,7 @@ joined_bybundler <- joined %>%
 joined_bycandidate <- joined %>% 
   group_by(candidate_name.y, bundler_last, bundler_first) %>% 
   summarise(n = n()) %>% 
-  arrange(candidate_name.y, bundler_last, bundler_first, desc(n)) %>% 
-  View()
+  arrange(candidate_name.y, bundler_last, bundler_first, desc(n)) 
 
 
 
