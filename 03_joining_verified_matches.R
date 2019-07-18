@@ -49,11 +49,11 @@ joined %>%
 
 joined %>% 
   filter(status == "MEMO") 
-  
+
+#number of donations per candidate (not num of unique bundlers)  
 joined %>% 
   count(candidate_name.y) %>% 
-  arrange(desc(n)) %>% 
-  write_xlsx("output/joined_grandtotalbycandidate.xlsx")
+  arrange(desc(n)) 
 
 joined %>% 
   count(bundler_last, bundler_first)
@@ -71,6 +71,7 @@ joined_bycandidate <- joined %>%
   summarise(n = n()) %>% 
   arrange(candidate_name.y, bundler_last, bundler_first, desc(n)) %>% 
   ungroup()
+
 
 #write results to files
 write_xlsx(joined_bybundler, "output/joined_bybundler.xlsx")
@@ -90,9 +91,24 @@ temp %>%
   spread(candname, bundlername) %>% 
   View()
 
+#only giving to one cand?
+faithful_bundlers <- temp %>% 
+  count(bundlername) %>% 
+  filter(n==1) %>% 
+  pull(bundlername)
 
-test_wide <- test %>% 
-  spread(lastname, sumcontribs)
+temp_faithfultots <- temp %>% 
+  filter(bundlername %in% faithful_bundlers) %>% 
+  count(candname) %>% 
+  arrange(desc(n))
+
+#num of unique bundlers per candidate
+temp_uniquebundlers <- temp %>% 
+  count(candname)
+
+#join
+temp_bothtogether <- left_join(temp_uniquebundlers, temp_faithfultots, by = "candname") %>% 
+  arrange(desc(n.x))
 
 
 
