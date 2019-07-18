@@ -25,6 +25,10 @@ matches <- bundlematches %>%
   gs_read(ws = "allrecords") %>% 
   clean_names() 
 
+#check to see match column variations
+matches %>% 
+  count(match_verdict)
+
 #pull out just the Y/YES matches
 matches_yes <- matches %>% 
   filter(match_verdict == "Y")
@@ -59,13 +63,15 @@ joined_bybundler <- joined %>%
   summarise(n = n()) %>% 
   arrange(bundler_last, bundler_first, candidate_name.y, desc(n)) 
 
+write_xlsx(joined_bybundler, "output/joined_bybundler.xlsx")
+
 #by candidate
 joined_bycandidate <- joined %>% 
   group_by(candidate_name.y, bundler_last, bundler_first) %>% 
   summarise(n = n()) %>% 
   arrange(candidate_name.y, bundler_last, bundler_first, desc(n)) 
 
-
+write_xlsx(joined_bycandidate, "output/joined_bycandidate.xlsx")
 
 
 ### bring in BIG ORIGINAL contribs table to check against #### 
