@@ -110,10 +110,17 @@ temp_uniquebundlers <- temp %>%
 temp_bothtogether <- left_join(temp_uniquebundlers, temp_faithfultots, by = "candname") %>% 
   arrange(desc(n.x))
 
+write_xlsx(temp_bothtogether, "output/temp_bothtogether.xlsx")
 
 
+#how many bundlers gave to more than one candidate
+temp_bundlers_count_cands <- temp %>% 
+  count(bundlername) %>% 
+  arrange(desc(n))
 
-### bring in BIG ORIGINAL contribs table to check against #### 
+write_xlsx(temp_bundlers_count_cands, "output/temp_bundlers_count_cands.xlsx")
+
+#### bring in BIG ORIGINAL contribs table to check against #### 
 
 #save the result as RDS
 prez_contribs_orig <- readRDS("holding/prez_contribs.rds")
