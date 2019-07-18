@@ -85,11 +85,11 @@ temp <- joined_bycandidate %>%
 
 temp
 
-temp %>% 
-  # filter(candname == "BENNET, MICHAEL F.") %>% 
-  rowid_to_column() %>% 
-  spread(candname, bundlername) %>% 
-  View()
+# temp %>% 
+#   # filter(candname == "BENNET, MICHAEL F.") %>% 
+#   rowid_to_column() %>% 
+#   spread(candname, bundlername) %>% 
+#   View()
 
 #only giving to one cand?
 faithful_bundlers <- temp %>% 
@@ -119,6 +119,32 @@ temp_bundlers_count_cands <- temp %>%
   arrange(desc(n))
 
 write_xlsx(temp_bundlers_count_cands, "output/temp_bundlers_count_cands.xlsx")
+
+
+
+
+#### Finding who Biden's donors gave to other than him??? ####
+biden_bundlers_vector <- temp %>% 
+  filter(candname == "BIDEN, JOSEPH R. JR.") %>% 
+  pull(bundlername)
+  
+biden_shared_donors <- temp %>% 
+  filter(bundlername %in% biden_bundlers_vector) %>% 
+  arrange(bundlername)
+
+biden_shared_donors %>% 
+  write_xlsx("output/biden_shared_donors.xlsx")
+
+
+#num of unique bundlers per candidate
+temp_uniquebundlers <- temp %>% 
+  count(candname)
+
+
+
+
+
+
 
 #### bring in BIG ORIGINAL contribs table to check against #### 
 
@@ -197,4 +223,12 @@ prez_contribs_orig %>%
     contributor_first_name == "YOLANDA"
   ) %>% 
   arrange(candidate_name)
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "STETSON"
+  ) %>% 
+  arrange(candidate_name) %>% 
+  write_xlsx("output/stetson_test.xlsx")
 
