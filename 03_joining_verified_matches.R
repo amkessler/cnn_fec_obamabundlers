@@ -52,7 +52,8 @@ joined %>%
   
 joined %>% 
   count(candidate_name.y) %>% 
-  arrange(desc(n))
+  arrange(desc(n)) %>% 
+  write_xlsx("output/joined_grandtotalbycandidate.xlsx")
 
 joined %>% 
   count(bundler_last, bundler_first)
@@ -61,17 +62,39 @@ joined %>%
 joined_bybundler <- joined %>% 
   group_by(bundler_last, bundler_first, candidate_name.y) %>% 
   summarise(n = n()) %>% 
-  arrange(bundler_last, bundler_first, candidate_name.y, desc(n)) 
-
-write_xlsx(joined_bybundler, "output/joined_bybundler.xlsx")
+  arrange(bundler_last, bundler_first, candidate_name.y, desc(n)) %>% 
+  ungroup()
 
 #by candidate
 joined_bycandidate <- joined %>% 
   group_by(candidate_name.y, bundler_last, bundler_first) %>% 
   summarise(n = n()) %>% 
-  arrange(candidate_name.y, bundler_last, bundler_first, desc(n)) 
+  arrange(candidate_name.y, bundler_last, bundler_first, desc(n)) %>% 
+  ungroup()
 
+#write results to files
+write_xlsx(joined_bybundler, "output/joined_bybundler.xlsx")
 write_xlsx(joined_bycandidate, "output/joined_bycandidate.xlsx")
+
+temp <- joined_bycandidate %>% 
+  mutate(
+    bundlername = paste0(bundler_first, " ", bundler_last)
+  ) %>% 
+  select(candname = candidate_name.y, bundlername) 
+
+temp
+
+temp %>% 
+  # filter(candname == "BENNET, MICHAEL F.") %>% 
+  rowid_to_column() %>% 
+  spread(candname, bundlername) %>% 
+  View()
+
+
+test_wide <- test %>% 
+  spread(lastname, sumcontribs)
+
+
 
 
 ### bring in BIG ORIGINAL contribs table to check against #### 
