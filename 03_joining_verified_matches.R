@@ -166,7 +166,7 @@ prez_contribs_orig <- prez_contribs_orig %>%
 
 #filter for just Q2 only
 prez_contribs_orig <- prez_contribs_orig %>% 
-  filter(contribution_date >= as_date("2019-04-01"))
+  filter(contribution_date > as_date("2019-03-31"))
 
 #add cand name - run top of step 01 first to grab candnames from postgres
 prez_contribs_orig <- inner_join(prez_contribs_orig, candnames, by = c("filer_committee_id_number" = "fec_committee_id")) %>% 
@@ -184,9 +184,10 @@ prez_contribs_orig %>%
 
 prez_contribs_orig %>% 
   filter(
-    contributor_last_name == "AVANT",
-    contributor_first_name == "NICOLE"
-  ) 
+    contributor_last_name == "BELL",
+    contributor_first_name == "COLLEEN"
+  ) %>% 
+  View()
 
 
 prez_contribs_orig %>% 
@@ -199,10 +200,23 @@ prez_contribs_orig %>%
 
 prez_contribs_orig %>% 
   filter(
-    contributor_last_name == "GOLDMAN",
-    contributor_first_name == "LISA"
+    contributor_last_name == "SOLOW",
+    contributor_first_name == "DAVID"
   ) %>% 
-  arrange(candidate_name) 
+  arrange(candidate_name) %>% 
+  View()
+
+
+prez_contribs_orig %>% 
+  filter(
+    contributor_last_name == "MADDOX",
+    contributor_first_name == "KERMAN"
+  ) %>% 
+  View()
+
+
+
+
 
 
 prez_contribs_orig %>% 

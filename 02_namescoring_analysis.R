@@ -142,6 +142,10 @@ bundlers <- bundlers %>%
     bundler_employer = str_squish(str_to_upper(bundler_employer))
   )
 
+unique_potential_matches %>% 
+  filter(contributor_last_name == "BELL",
+         contributor_first_name == "COLLEEN")
+
 
 joined <- inner_join(bundlers, unique_potential_matches, by = "matchstring")
 
