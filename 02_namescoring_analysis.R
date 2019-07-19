@@ -8,6 +8,10 @@ options(scipen = 999)
 #read in saved data file from previous step
 prez_contribs_bundler_matches <- readRDS("output/prez_contribs_bundler_matches.rds")
 
+prez_contribs_bundler_matches %>% 
+  filter(contributor_last_name == "Bell") %>% 
+  View()
+
 #limit to 500 aggregate or above
 prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>% 
   filter(contribution_aggregate >= 500)
@@ -44,7 +48,6 @@ prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>%
     contributor_employer = str_to_upper(str_squish(contributor_employer))
   )
 
-
 #add a unique id to each of the records/rows
 prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>% 
   tibble::rowid_to_column("index_id")
@@ -68,12 +71,16 @@ prez_contribs_bundler_matches <- prez_contribs_bundler_matches %>%
     )
   ) 
 
+prez_contribs_bundler_matches %>% 
+  filter(contributor_last_name == "BELL") %>% 
+  View()
 
 #save result for later use in joining up verified matches in step 03
 saveRDS(prez_contribs_bundler_matches, "processed_data/prez_contribs_bundler_matches_forjoin.rds")
 
 
-# create a table for joining that includes only unique name/add combinations
+
+# create a table for joining that includes only unique name/add combinations ####
 unique_potential_matches <- prez_contribs_bundler_matches %>% 
   select(index_id,
          donorhash,
@@ -105,6 +112,7 @@ unique_potential_matches <- prez_contribs_bundler_matches %>%
            contributor_occupation,
            contributor_employer,
            .keep_all = TRUE)
+
 
 
 #pull in bundler file and add columns
@@ -148,6 +156,10 @@ unique_potential_matches %>%
 
 
 joined <- inner_join(bundlers, unique_potential_matches, by = "matchstring")
+
+joined %>% 
+  filter(contributor_last_name == "BELL",
+         contributor_first_name == "COLLEEN")
 
 
 # ASSIGNING SCORES TO POSSIBLE MATCHES ####
@@ -194,6 +206,10 @@ final_for_research %>%
 #order by status, lname
 final_for_research <- final_for_research %>% 
   arrange(match_type, bundler_last, bundler_first, contributor_last_name, contributor_first_name)
+
+final_for_research %>% 
+  filter(contributor_last_name == "BELL",
+         contributor_first_name == "COLLEEN")
 
 
 #write results to file

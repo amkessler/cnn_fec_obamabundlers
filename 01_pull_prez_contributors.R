@@ -59,9 +59,6 @@ prez_contribs <- prez_contribs %>%
   ) %>% 
   collect()
 
-#save the result as RDS
-saveRDS(prez_contribs, "holding/prez_contribs.rds")
-
 #check to make sure it worked
 glimpse(prez_contribs)
 
@@ -81,9 +78,12 @@ tail(prez_contribs$contribution_date)
 prez_contribs <- prez_contribs %>% 
   filter(contribution_date >= as_date("2019-04-01")) 
 
+prez_contribs %>% 
+  filter(contributor_last_name == "Bell") %>% 
+  View()
 
-
-
+#save the result as RDS
+saveRDS(prez_contribs, "holding/prez_contribs.rds")
 
 
 ### PULLING OUT POSSIBLE OBAMA BUNDLERS ##### ---------------------------
@@ -138,16 +138,28 @@ zzz <- matchbundlers(test_match)
 prez_contribs_bundler_matches <- map_df(vector_matchstring, matchbundlers) 
 #works! (req change above to collect the large prez_contribs table locally)
 
+names(prez_contribs_bundler_matches)
+
+prez_contribs_bundler_matches %>% 
+  filter(contributor_last_name == "Bell") %>% 
+  View()
+
 
 ## add candidate name to the mix
 head(candnames)
 
 prez_contribs_bundler_matches
 
-prez_contribs_bundler_matches <- inner_join(prez_contribs_bundler_matches, candnames, by = c("filer_committee_id_number" = "fec_committee_id")) %>% 
+prez_contribs_bundler_matches_join <- inner_join(prez_contribs_bundler_matches, candnames, by = c("filer_committee_id_number" = "fec_committee_id")) %>% 
   select(candidate_name = name, everything())
 
+
+prez_contribs_bundler_matches_join %>% 
+  filter(contributor_last_name == "Bell") %>% 
+  View()
+
+
 #save results 
-write_csv(prez_contribs_bundler_matches, "output/prez_contribs_bundler_matches.csv")
-saveRDS(prez_contribs_bundler_matches, "output/prez_contribs_bundler_matches.rds")
+write_csv(prez_contribs_bundler_matches_join, "output/prez_contribs_bundler_matches.csv")
+saveRDS(prez_contribs_bundler_matches_join, "output/prez_contribs_bundler_matches.rds")
 

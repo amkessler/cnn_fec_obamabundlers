@@ -13,6 +13,10 @@ prez_contribs_forjoin <- readRDS("processed_data/prez_contribs_bundler_matches_f
 
 glimpse(prez_contribs_forjoin)
 
+prez_contribs_forjoin %>% 
+  filter(contributor_last_name == "BELL",
+         contributor_first_name == "COLLEEN")
+  
 #trigger google authentication - should only have to do this once per computer
 # gs_ls()
 
@@ -43,6 +47,8 @@ saveRDS(matches_yes, "processed_data/matches_yes.rds")
 #join verified matches with original fec contribution records
 
 joined <- left_join(matches_yes, prez_contribs_forjoin, by = c("donorhash"))
+
+
 
 #save raw joined
 write_xlsx(joined, "output/joined_raw.xlsx")
@@ -145,12 +151,86 @@ biden_shared_donors %>%
 #   count(candname)
 
 
+bidenshares_count <- biden_shared_donors %>% 
+  filter(candname != "BIDEN, JOSEPH R. JR.") %>% 
+  count(candname)
+
+
+
+#function to deal with multiple unique bundler runs
+
+generate_shared <- function(cname){
+  bundlers_vector <- temp %>% 
+    filter(candname == cname) %>% 
+    pull(bundlername)
+  
+  shared_donors <- temp %>% 
+    filter(bundlername %in% bundlers_vector) %>% 
+    arrange(bundlername)
+ 
+  shared_count <- shared_donors %>% 
+    filter(candname != cname) %>% 
+    count(candname) %>% 
+    mutate(primename = cname)
+  
+  return(shared_count)
+  
+}
+
+list_biden <- generate_shared("BIDEN, JOSEPH R. JR.")
+list_pete <- generate_shared("BUTTIGIEG, PETE")
+list_harris <- generate_shared("HARRIS, KAMALA D.")
+list_booker <- generate_shared("BOOKER, CORY A.")
+list_warren <- generate_shared("WARREN, ELIZABETH")
+
+combined <- bind_rows(
+  list_biden,
+  list_pete,
+  list_harris,
+  list_booker,
+  list_warren
+) %>% 
+  select(primename, candname, n)
+
+combined
+
+matrix_for_joella <- spread(combined, primename, n)
+
+write_xlsx(matrix_for_joella, "output/matrix_for_joella.xlsx")
+
+
+#heatmap
+
+combined
+
+myheatmap <- 
+  
+myheatmap <- ggplot(data = combined, mapping = aes(x = primename,
+                                                         y = candname,
+                                                         fill = -n)) +
+  geom_tile() +
+  xlab(label = "") +
+  ylab(label = "") +
+  theme_minimal()
+
+myheatmap
+
+
+library(plotly)
+ggplotly(myheatmap)
+
+
+
+
+# candname_vector <- temp %>% 
+#   count(candname) %>% 
+#   pull(candname)
 
 
 
 
 
-#### bring in BIG ORIGINAL contribs table to check against #### 
+#### bring in BIG ORIGINAL contribs table to check against #### ----------------------------------------------
 
 #save the result as RDS
 prez_contribs_orig <- readRDS("holding/prez_contribs.rds")
@@ -249,4 +329,12 @@ prez_contribs_orig %>%
   ) %>% 
   arrange(candidate_name) %>% 
   write_xlsx("output/stetson_test.xlsx")
+
+
+prez_contribs_orig %>%
+  filter(
+    str_detect(contributor_last_name, "KATZEN"),
+    str_detect(contributor_first_name, "JEF")
+  ) %>%
+  View()
 
