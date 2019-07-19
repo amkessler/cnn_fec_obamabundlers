@@ -65,6 +65,10 @@ saveRDS(prez_contribs, "holding/prez_contribs.rds")
 #check to make sure it worked
 glimpse(prez_contribs)
 
+prez_contribs %>% 
+  filter(contributor_last_name == "Bell") %>% 
+  View()
+
 
 ## now let's filter for JUST Q2 CONTRIBUTIONS ####
 
@@ -75,7 +79,7 @@ tail(prez_contribs$contribution_date)
 
 #filter for Q2
 prez_contribs <- prez_contribs %>% 
-  filter(contribution_date > as_date("2019-04-01")) 
+  filter(contribution_date >= as_date("2019-04-01")) 
 
 
 
