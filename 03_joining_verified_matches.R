@@ -44,6 +44,9 @@ saveRDS(matches_yes, "processed_data/matches_yes.rds")
 
 joined <- left_join(matches_yes, prez_contribs_forjoin, by = c("donorhash"))
 
+#save raw joined
+write_xlsx(joined, "output/joined_raw.xlsx")
+
 joined %>% 
   count(status)
 
@@ -74,8 +77,8 @@ joined_bycandidate <- joined %>%
 
 
 #write results to files
-write_xlsx(joined_bybundler, "output/joined_bybundler.xlsx")
-write_xlsx(joined_bycandidate, "output/joined_bycandidate.xlsx")
+write_xlsx(joined_bybundler, "output/relationships_bundlersort.xlsx")
+write_xlsx(joined_bycandidate, "output/relationships_candidatesort.xlsx")
 
 temp <- joined_bycandidate %>% 
   mutate(
@@ -108,9 +111,10 @@ temp_uniquebundlers <- temp %>%
 
 #join
 temp_bothtogether <- left_join(temp_uniquebundlers, temp_faithfultots, by = "candname") %>% 
-  arrange(desc(n.x))
+  arrange(desc(n.x)) %>% 
+  rename(total_bundlers = n.x, exclusive_bundlers = n.y)
 
-write_xlsx(temp_bothtogether, "output/temp_bothtogether.xlsx")
+write_xlsx(temp_bothtogether, "output/temp_candidate_counts.xlsx")
 
 
 #how many bundlers gave to more than one candidate
@@ -118,7 +122,7 @@ temp_bundlers_count_cands <- temp %>%
   count(bundlername) %>% 
   arrange(desc(n))
 
-write_xlsx(temp_bundlers_count_cands, "output/temp_bundlers_count_cands.xlsx")
+write_xlsx(temp_bundlers_count_cands, "output/temp_bundler_counts.xlsx")
 
 
 
@@ -136,9 +140,9 @@ biden_shared_donors %>%
   write_xlsx("output/biden_shared_donors.xlsx")
 
 
-#num of unique bundlers per candidate
-temp_uniquebundlers <- temp %>% 
-  count(candname)
+# #num of unique bundlers per candidate
+# temp_uniquebundlers <- temp %>% 
+#   count(candname)
 
 
 
