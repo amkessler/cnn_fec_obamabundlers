@@ -1,2 +1,2 @@
-# cnn_fec_obamabundlers
-analysis of fec data for obama bundlers giving to 2020 candidates
+# fec_prezcontribs_obamabundlers
+analysis of 2020 fec data looking for Obama bundlers giving to 2020 candidates
